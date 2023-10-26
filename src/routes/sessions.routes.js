@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { usersService } from "../dao/index.js";
 import passport from "passport";
+import { config } from "../config/config.js";
 
 const router = Router();
 
@@ -8,7 +8,7 @@ const router = Router();
 router.post(
   "/signUp",
   passport.authenticate("signupLocalStrategy", {
-    failureRedirect: "/api/session/fail-signup",
+    failureRedirect: "/api/sessions/fail-signup",
   }),
   async (req, res) => {
     res.render("logIn", {
@@ -24,11 +24,25 @@ router.get("/fail-signup", (req, res) => {
   });
 });
 
+//sign up with github
+router.get("/signup-github", passport.authenticate("signupGithubStrategy"));
+router.get(
+  config.github.callbackUrl,
+  passport.authenticate("signupGithubStrategy", {
+    failureRedirect: "/api/sessions/fail-signup",
+  }),
+  (req, res) => {
+    res.render("profile", {
+      style: "profile.css",
+    });
+  }
+);
+
 //log in
 router.post(
   "/login",
   passport.authenticate("loginLocalStrategy", {
-    failureRedirect: "/api/session/fail-login",
+    failureRedirect: "/api/sessions/fail-login",
   }),
   async (req, res) => {
     res.redirect("/home", 200, { style: "home.css" });
@@ -40,7 +54,19 @@ router.get("/fail-login", (req, res) => {
     style: "logIn.css",
   });
 });
+//log in up with github
+router.get("/login-github", passport.authenticate("loginGithubStrategy"));
+router.get(
+  config.github.callbackUrl,
+  passport.authenticate("loginGithubStrategy", {
+    failureRedirect: "/api/sessions/fail-login",
+  }),
+  (req, res) => {
+    res.redirect("/profile", 200, { style: "profile.css" });
+  }
+);
 
+//logout
 router.get("/logout", async (req, res) => {
   try {
     req.session.destroy((error) => {
@@ -56,4 +82,4 @@ router.get("/logout", async (req, res) => {
   }
 });
 
-export { router as sessionRouter };
+export { router as sessionsRouter };

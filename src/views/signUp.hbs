@@ -1,8 +1,13 @@
 <h1>Nice to meet you</h1>
+<h2>Create your account</h2>
+<div id="github">
+  <a href="/api/sessions/signup-github">Sign up with Github</a>
+  <h6>or with email and password</h6>
+</div>
 
 <p>{{error}}</p>
 <div class="form">
-  <form action="/api/session/signUp" method="post">
+  <form action="/api/sessions/signUp" method="post">
     <input type="text" name="name" placeholder="name" />
     <br />
     <input type="text" name="lastname" placeholder="lastname" />

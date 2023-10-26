@@ -8,13 +8,14 @@ import { productsRouter } from "./routes/products.routes.js";
 import { cartsRouter } from "./routes/carts.routes.js";
 import { cartsService, chatsService, productsService } from "./dao/index.js";
 import { chatsRouter } from "./routes/chat.routes.js";
-import { sessionRouter } from "./routes/session.routes.js";
+import { sessionsRouter } from "./routes/sessions.routes.js";
 import { connectDB } from "./config/dbConnection.js";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import passport from "passport";
 import { initializePassport } from "./config/passport.config.js";
+import { config } from "./config/config.js";
 
 const port = 8080;
 const app = express();
@@ -29,10 +30,9 @@ app.use(
   session({
     store: MongoStore.create({
       ttl: 60,
-      mongoUrl:
-        "mongodb+srv://valeriacasatti:tgadm001@cluster0.0ctypqf.mongodb.net/ecommerceDB?retryWrites=true&w=majority",
+      mongoUrl: config.mongo.url,
     }),
-    secret: "sessionEcommerce",
+    secret: config.server.secretSession,
     resave: true,
     saveUninitialized: true,
   })
@@ -60,7 +60,7 @@ app.use(viewsRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/api/chats", chatsRouter);
-app.use("/api/session", sessionRouter);
+app.use("/api/sessions", sessionsRouter);
 
 const io = new Server(httpServer);
 

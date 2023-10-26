@@ -2,6 +2,8 @@ import passport from "passport";
 import localStrategy from "passport-local";
 import { createHash, isValidPassword } from "../utils.js";
 import { usersService } from "../dao/index.js";
+import { config } from "./config.js";
+import GithubStrategy from "passport-github2";
 
 export const initializePassport = () => {
   //signup
@@ -35,6 +37,38 @@ export const initializePassport = () => {
     )
   );
 
+  //signup with github
+  passport.use(
+    "signupGithubStrategy",
+    new GithubStrategy(
+      {
+        clientID: config.github.clientId,
+        clientSecret: config.github.clientSecret,
+        callbackURL: `http://localhost:8080/api/sessions${config.github.callbackUrl}`,
+      },
+      async (accessToken, refreshToken, profile, done) => {
+        try {
+          const user = await usersService.getUser({
+            email: profile._json.email,
+          });
+          if (user) {
+            return done(null, user);
+          }
+          const newUser = {
+            name: profile._json.name,
+            email: profile._json.email,
+            password: createHash(profile.id),
+          };
+          console.log(newUser);
+          const userCreated = await usersService.addUser(newUser);
+          return done(null, userCreated);
+        } catch (error) {
+          return done(error);
+        }
+      }
+    )
+  );
+
   //log in
   passport.use(
     "loginLocalStrategy",
@@ -49,6 +83,31 @@ export const initializePassport = () => {
             return done(null, false);
           }
           if (!isValidPassword(password, user)) {
+            return done(null, false);
+          }
+          return done(null, user);
+        } catch (error) {
+          return done(error);
+        }
+      }
+    )
+  );
+
+  //login with github
+  passport.use(
+    "loginGithubStrategy",
+    new GithubStrategy(
+      {
+        clientID: config.github.clientId,
+        clientSecret: config.github.clientSecret,
+        callbackURL: `http://localhost:8080/api/sessions${config.github.callbackUrl}`,
+      },
+      async (profile, done) => {
+        try {
+          const user = await usersService.getUser({
+            email: profile._json.email,
+          });
+          if (!user) {
             return done(null, false);
           }
           return done(null, user);

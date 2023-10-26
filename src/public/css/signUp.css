@@ -4,10 +4,29 @@ h1 {
   text-transform: uppercase;
   margin-bottom: 2rem;
 }
+h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
 
 p {
   color: tomato;
   text-align: center;
+}
+
+#github {
+  text-align: center;
+  transition: color 0.3s ease, color 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+#github:hover {
+  color: black;
+  font-weight: bold;
+}
+
+h6 {
+  margin-top: 2rem;
 }
 
 .form {

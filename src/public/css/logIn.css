@@ -20,6 +20,24 @@ h2 {
   text-align: center;
 }
 
+#github {
+  text-align: center;
+  transition: color 0.3s ease, color 0.3s ease;
+}
+
+#github a {
+  text-transform: uppercase;
+}
+
+#github:hover {
+  color: black;
+  font-weight: bold;
+}
+
+h6 {
+  margin-top: 10px;
+}
+
 .form {
   text-align: center;
   padding-bottom: 2rem;

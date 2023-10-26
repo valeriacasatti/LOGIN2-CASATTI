@@ -88,12 +88,11 @@ router.get("/", (req, res) => {
 
 //profile
 router.get("/profile", (req, res) => {
-  if (req.user.email) {
+  if (req.user?.email) {
     const name = req.user.name;
     res.render("profile", { name, style: "profile.css" });
   } else {
     res.redirect("/");
-    //agregar sweet alert
   }
 });
 export { router as viewsRouter };
